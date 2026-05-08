@@ -1,11 +1,57 @@
-<div align="center">
+# StarFate ✨
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+在星空与阴影中揭示宿命。StarFate 融合了古老的神秘学传统与现代 AI。无需多言，一切早已在命运中书写。
 
-  <h1>Built with AI Studio</h2>
+## 🔮 核心功能 (Features)
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+目前应用包含三大核心模块，所有解读均由强大的 AI 引擎（Gemini）结合专业命理与神秘学知识自动生成，兼具专业性与极高审美：
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+### 1. 🎴 塔罗指引 (Tarot Deck)
+*   **经典牌阵**：采用经典的韦特塔罗牌阵（过去、现在、未来 3 张牌）。
+*   **专属问题**：用户可以默念特定的问题，或留空寻求命运的整体指引。
+*   **沉浸体验**：自动抽取并渲染高清塔罗牌面。AI 将融合神秘学符号学与心理学，给出直指内心的深度解读。
 
-</div>
+### 2. 🌌 星盘解读 (Astrology Chart)
+*   **精准定制**：需要输入用户的具体出生日期、时间与地点，用于严谨的星盘校验。
+*   **核心配置**：AI 自动计算并提取用户的核心宇宙烙印——“太阳”（核心意志）、“月亮”（潜意识与情感）和“上升”（人格面具）三大星座。
+*   **灵魂洞察**：分析三大维度之间的隐秘张力、能量互动，书写一份探讨灵魂进化方向的详实占星报告。本地自动缓存配置，避免重复输入。
+
+### 3. ☯ 八字命理 (Chinese Bazi)
+*   **传统推演**：输入性别、阳历出生日期、时间与地点，旨在进行严谨的四柱八字与五行推导。
+*   **阴阳流转**：AI 将区分乾造（男）与坤造（女）推演大运顺逆，结合出生地矫正环境影响。
+*   **东方美学**：使用五行（金木水火土）与天干地支的美学意象，输出具有东方禅意的命运解析、喜忌用神判断及人生转机提示。同样支持本地缓存。
+
+---
+
+## 🛠️ 技术栈 (Tech Stack)
+
+*   **核心框架：** React 18 / Vite / TypeScript
+*   **样式与视觉：** Tailwind CSS 搭配深色暗黑基调，中文字体采用 `霞鹜文楷 Lite`，英文字体结合衬线字体，营造极致的神秘学宿命感与高级感。
+*   **动画加载：** 采用 `motion/react` 打造如梦似幻的丝滑动画表现。
+*   **大语言模型：** `@google/genai` (Gemini API)，搭配定制化的占卜与命理学大师 Prompt，确保回答的严谨程度与文笔美感。
+
+---
+
+## 🚀 部署指南 (Deployment)
+
+本项目原生支持标准的 Docker 部署，并配置了 **GitHub Actions** workflows，方便一键构建并推送到 GitHub Container Registry (ghcr.io)。
+
+### 环境变量限制
+使用前需确保有有效的 Gemini API 密钥：
+\`GEMINI_API_KEY=your_api_key_here\`
+
+### 依赖 GitHub Actions 自动构建 (推荐)
+1. Fork 本仓库。
+2. 在你仓库的 **Settings -> Secrets and variables -> Actions** 中，添加一个新的 Secret，命名为 \`GEMINI_API_KEY\`。
+3. 推送代码到 \`main\` 或 \`master\` 分支，GitHub Actions 将会自动打包构建 Docker 镜像，并推送到你账户下的 \`ghcr.io\`。
+4. 你的服务器只需登录 GitHub 镜像服务，随后通过 \`docker pull\` 拉取运行即可对外提供服务。
+
+### 通过 Docker 本地构建
+\`\`\`bash
+# 构建镜像并传入 API Key
+docker build --build-arg GEMINI_API_KEY=你的密钥 -t starfate-app .
+
+# 运行容器并映射 3000 端口
+docker run -d -p 3000:3000 starfate-app
+\`\`\`
+服务启动后，访问 \`http://localhost:3000\` 即可探索属于你的宿命轨迹。
