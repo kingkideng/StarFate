@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { Loader2, Sparkles } from 'lucide-react';
-import { interpretAstrology } from '../lib/gemini';
+import { interpretAstrologyStream } from '../lib/gemini';
 
 export default function Astrology() {
   const [date, setDate] = useState(() => localStorage.getItem('astro_date') || '1990-01-01');
   const [time, setTime] = useState(() => localStorage.getItem('astro_time') || '12:00');
   const [location, setLocation] = useState(() => localStorage.getItem('astro_location') || '');
   
-  const [result, setResult] = useState<{sun: string, moon: string, rising: string, report: string} | null>(null);
+  const [report, setReport] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,18 +20,15 @@ export default function Astrology() {
 
   const generateReport = async () => {
     setLoading(true);
-    setResult(null);
+    setReport('');
     try {
-      const res = await interpretAstrology(date, time, location);
-      setResult(res);
+      const stream = await interpretAstrologyStream(date, time, location);
+      for await (const text of stream) {
+        setReport(prev => prev + text);
+      }
     } catch (error) {
       console.error(error);
-      setResult({
-        sun: '未知',
-        moon: '未知',
-        rising: '未知',
-        report: '星空被乌云遮蔽，暂时无法解读星象... 请稍后再试。'
-      });
+      setReport(prev => prev + '\n\n星空被乌云遮蔽，暂时无法解读星象... 请稍后再试。');
     } finally {
       setLoading(false);
     }
@@ -52,7 +49,7 @@ export default function Astrology() {
         </p>
       </div>
 
-      {!result && (
+      {!report && (
         <div className="glass-panel p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30">
           <div className="space-y-8">
             <div className="flex flex-col">
@@ -116,7 +113,7 @@ export default function Astrology() {
         </div>
       )}
 
-      {result && (
+      {report && (
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -125,28 +122,17 @@ export default function Astrology() {
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C5A059]/50 to-transparent" />
           
-          <div className="flex justify-center mb-8 gap-4 text-[#C5A059]/60 font-serif border-b border-[#C5A059]/20 pb-8">
-            <div className="text-center">
-              <div className="text-2xl mb-1">☀</div>
-              <div className="text-sm tracking-widest">{result.sun}</div>
-            </div>
-            <div className="text-center px-8 border-x border-[#C5A059]/20">
-              <div className="text-2xl mb-1">☾</div>
-              <div className="text-sm tracking-widest">{result.moon}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl mb-1">⇡</div>
-              <div className="text-sm tracking-widest">{result.rising}</div>
-            </div>
+          <div className="text-center mb-8 text-[#C5A059]/60 font-serif border-b border-[#C5A059]/20 pb-8 tracking-widest uppercase">
+            {date.replace(/-/g, '/')} {time} 生人
           </div>
 
           <div className="markdown-body">
-            <ReactMarkdown>{result.report}</ReactMarkdown>
+            <ReactMarkdown>{report}</ReactMarkdown>
           </div>
           
           <div className="mt-12 pt-8 border-t border-[#C5A059]/20 flex justify-center">
             <button
-              onClick={() => setResult(null)}
+              onClick={() => setReport('')}
               className="text-white/60 hover:text-[#C5A059] hover:underline underline-offset-4 transition-colors font-serif tracking-widest text-sm uppercase"
             >
               返回星盘核心

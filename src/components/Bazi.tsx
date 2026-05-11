@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { Moon, Loader2 } from 'lucide-react';
-import { interpretBazi } from '../lib/gemini';
+import { interpretBaziStream } from '../lib/gemini';
 
 export default function Bazi() {
   const [gender, setGender] = useState(() => localStorage.getItem('bazi_gender') || '男');
@@ -24,11 +24,13 @@ export default function Bazi() {
     setLoading(true);
     setReport('');
     try {
-      const result = await interpretBazi(gender, date, time, location);
-      setReport(result);
+      const stream = await interpretBaziStream(gender, date, time, location);
+      for await (const text of stream) {
+        setReport(prev => prev + text);
+      }
     } catch (error) {
       console.error(error);
-      setReport('天机不可泄露，因缘此刻难明... 请稍后再试。');
+      setReport(prev => prev + '\n\n天机不可泄露，因缘此刻难明... 请稍后再试。');
     } finally {
       setLoading(false);
     }

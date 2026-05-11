@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { TAROT_CARDS } from '../types';
-import { interpretTarot } from '../lib/gemini';
+import { interpretTarotStream } from '../lib/gemini';
 import { cn } from '../lib/utils';
 
 export default function Tarot() {
@@ -33,15 +33,19 @@ export default function Tarot() {
   const generateReport = async () => {
     if (selectedCards.length < 3) return;
     setLoading(true);
+    setReport('');
     try {
       const past = `${selectedCards[0].zhName} (${selectedCards[0].name})`;
       const present = `${selectedCards[1].zhName} (${selectedCards[1].name})`;
       const future = `${selectedCards[2].zhName} (${selectedCards[2].name})`;
-      const result = await interpretTarot(past, present, future, question);
-      setReport(result);
+      const stream = await interpretTarotStream(past, present, future, question);
+      
+      for await (const text of stream) {
+        setReport(prev => prev + text);
+      }
     } catch (error) {
       console.error(error);
-      setReport('以太大气出现了扰动，命运的信号暂时中断... 请稍后再试。');
+      setReport(prev => prev + '\n\n以太大气出现了扰动，命运的信号暂时中断... 请稍后再试。');
     } finally {
       setLoading(false);
     }
