@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io # GitHub 容器仓库地址
-  IMAGE_NAME: ${{ github.repository }} # 自动获取你的 Github "用户名/仓库名"
+  IMAGE_NAME: kingkideng/starfate # 必须强制使用小写，否则 Docker 会因为大写字母报错
 
 jobs:
   build-and-push-image:

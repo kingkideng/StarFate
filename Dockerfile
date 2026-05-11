@@ -5,7 +5,7 @@ WORKDIR /app
 
 # 1. 复制依赖描述文件并安装所有依赖
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # 2. 复制所有源代码到容器内
 COPY . .
