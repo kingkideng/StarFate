@@ -53,9 +53,9 @@ export default function Astrology() {
       </div>
 
       {!report && (
-        <div className="glass-panel w-full p-5 sm:p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30 box-border">
-          <div className="space-y-8 w-full max-w-full">
-            <div className="flex flex-col min-w-0">
+        <div className="glass-panel w-full p-5 sm:p-8 md:p-12 rounded-2xl md:rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30 box-border overflow-hidden">
+          <div className="space-y-6 md:space-y-8 w-full max-w-full">
+            <div className="flex flex-col w-full min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">性别</span>
               </label>
@@ -71,7 +71,7 @@ export default function Astrology() {
               </div>
             </div>
 
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col w-full min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">出生日期</span>
               </label>
@@ -79,11 +79,11 @@ export default function Astrology() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full min-w-0 bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark]"
+                className="w-full max-w-full box-border bg-black/40 border border-[#C5A059]/30 rounded-xl px-4 py-3 md:p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark] appearance-none"
               />
             </div>
             
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col w-full min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">出生时间</span>
               </label>
@@ -91,11 +91,11 @@ export default function Astrology() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full min-w-0 bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark]"
+                className="w-full max-w-full box-border bg-black/40 border border-[#C5A059]/30 rounded-xl px-4 py-3 md:p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark] appearance-none"
               />
             </div>
 
-            <div className="flex flex-col min-w-0">
+            <div className="flex flex-col w-full min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">出生地点 (城市/国家)</span>
               </label>
@@ -104,7 +104,7 @@ export default function Astrology() {
                 placeholder="例如: 中国 北京"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full min-w-0 bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors"
+                className="w-full max-w-full box-border bg-black/40 border border-[#C5A059]/30 rounded-xl px-4 py-3 md:p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors appearance-none"
                 autoComplete="off"
               />
             </div>
