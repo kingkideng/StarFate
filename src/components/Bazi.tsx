@@ -53,19 +53,19 @@ export default function Bazi() {
       </div>
 
       {!report && (
-        <div className="glass-panel p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30">
+        <div className="glass-panel p-6 sm:p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30">
           <div className="space-y-8">
             <div className="flex flex-col">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">性别</span>
               </label>
-              <div className="flex gap-6">
-                <label className="flex items-center space-x-2 cursor-pointer text-white/80 hover:text-white transition-colors">
-                  <input type="radio" name="gender" value="男" checked={gender === '男'} onChange={(e) => setGender(e.target.value)} className="accent-[#C5A059] w-4 h-4" />
+              <div className="flex gap-4 sm:gap-6">
+                <label className="flex items-center space-x-3 cursor-pointer py-2 pr-4 text-white/80 hover:text-white transition-colors">
+                  <input type="radio" name="gender" value="男" checked={gender === '男'} onChange={(e) => setGender(e.target.value)} className="accent-[#C5A059] w-5 h-5 md:w-4 md:h-4" />
                   <span className="tracking-widest">男 (乾造)</span>
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer text-white/80 hover:text-white transition-colors">
-                  <input type="radio" name="gender" value="女" checked={gender === '女'} onChange={(e) => setGender(e.target.value)} className="accent-[#C5A059] w-4 h-4" />
+                <label className="flex items-center space-x-3 cursor-pointer py-2 pl-2 pr-4 text-white/80 hover:text-white transition-colors">
+                  <input type="radio" name="gender" value="女" checked={gender === '女'} onChange={(e) => setGender(e.target.value)} className="accent-[#C5A059] w-5 h-5 md:w-4 md:h-4" />
                   <span className="tracking-widest">女 (坤造)</span>
                 </label>
               </div>
@@ -137,7 +137,7 @@ export default function Bazi() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden"
+          className="glass-panel p-6 sm:p-8 md:p-12 rounded-3xl relative overflow-hidden"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C5A059]/50 to-transparent" />
           

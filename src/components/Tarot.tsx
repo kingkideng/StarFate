@@ -100,15 +100,15 @@ export default function Tarot() {
       )}
 
       {/* Cards Display */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="flex flex-row justify-center gap-4 md:gap-8 mb-12">
         {[0, 1, 2].map((index) => {
           const card = selectedCards[index];
           const positions = ['过去', '现在', '未来'];
           
           return (
-            <div key={index} className="flex flex-col items-center">
-              <div className="text-sm tracking-widest text-[#C5A059]/70 mb-4 uppercase">{positions[index]}</div>
-              <div className="w-full max-w-[240px] aspect-[1/1.7] relative perspective select-none">
+            <div key={index} className="flex flex-col items-center flex-1 max-w-[240px]">
+              <div className="text-xs md:text-sm tracking-widest text-[#C5A059]/70 mb-3 md:mb-4 uppercase">{positions[index]}</div>
+              <div className="w-full aspect-[1/1.7] relative perspective select-none">
                 <motion.div
                   className="w-full h-full relative preserve-3d"
                   initial={false}
@@ -149,7 +149,7 @@ export default function Tarot() {
                   transition={{ delay: 0.3 }}
                   className="mt-6 text-center"
                 >
-                  <h3 className="text-xl font-serif text-[#C5A059] uppercase tracking-widest">{card.zhName}</h3>
+                  <h3 className="text-sm md:text-xl font-serif text-[#C5A059] uppercase tracking-widest">{card.zhName}</h3>
                 </motion.div>
               )}
             </div>
@@ -181,7 +181,7 @@ export default function Tarot() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden"
+          className="glass-panel p-6 sm:p-8 md:p-12 rounded-3xl relative overflow-hidden"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C5A059]/50 to-transparent" />
           <div className="markdown-body mt-8">

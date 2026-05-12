@@ -12,6 +12,20 @@
   --color-border: rgba(255, 255, 255, 0.1);
 }
 
+@utility pt-safe {
+  padding-top: max(1.5rem, env(safe-area-inset-top));
+}
+@utility pt-safe-10 {
+  padding-top: max(2.5rem, env(safe-area-inset-top));
+}
+@utility pb-safe {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+}
+@utility px-safe {
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-ink);
@@ -19,6 +33,14 @@ body {
   color: #fff;
   overflow-x: hidden;
   height: 100%;
+}
+
+/* iOS Safari Zoom Prevention */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+textarea {
+  font-size: 16px !important;
 }
 
 /* Atmospheric background (disabled in favor of body gradient) */

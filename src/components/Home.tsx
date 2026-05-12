@@ -39,11 +39,11 @@ export default function Home({ setModule }: HomeProps) {
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="flex flex-col justify-center min-h-[70vh] w-full max-w-6xl mx-auto"
     >
-    <div className="max-w-3xl mb-12 self-start">
-        <h2 className="text-4xl md:text-5xl font-light leading-tight mb-4 text-white/90 font-serif tracking-widest">
+    <div className="max-w-3xl mb-10 md:mb-12 self-start">
+        <h2 className="text-[20px] min-[375px]:text-[22px] sm:text-3xl lg:text-5xl whitespace-nowrap font-light leading-tight mb-3 md:mb-4 text-white/90 font-serif tracking-widest">
           在星空与阴影中揭示宿命。
         </h2>
-        <p className="text-lg font-sans text-white/40 max-w-xl font-light leading-relaxed">
+        <p className="text-sm md:text-lg font-sans text-white/40 max-w-xl font-light leading-relaxed">
           StarFate 融合了古老的神秘学传统与现代 AI。无需多言，一切早已在命运中书写。
         </p>
       </div>
@@ -57,7 +57,7 @@ export default function Home({ setModule }: HomeProps) {
             transition={{ duration: 0.6, delay: 0.4 + idx * 0.1 }}
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
             onClick={card.action}
-            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 flex flex-col justify-between cursor-pointer transition-all hover:bg-white/10 hover:border-[#C5A059]/40 min-h-[300px]"
+            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 flex flex-col justify-between cursor-pointer transition-all hover:bg-white/10 hover:border-[#C5A059]/40 min-h-[220px] md:min-h-[300px]"
           >
             <div className={`absolute top-0 right-0 w-32 h-32 opacity-20 blur-3xl ${idx === 0 ? 'bg-[#3B2F63]' : idx === 1 ? 'bg-[#1A2A4E]' : 'bg-[#4E1A1A] opacity-10'}`}></div>
             
