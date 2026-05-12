@@ -5,6 +5,7 @@ const MODEL_NAME = 'gemini-3.1-flash-lite';
 
 export const config = {
   runtime: 'edge',
+  regions: ['iad1', 'sfo1', 'hnd1', 'sin1', 'cdg1', 'lhr1'],
 };
 
 export default async function handler(req: Request) {
