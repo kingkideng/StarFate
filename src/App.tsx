@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Sparkles, ArrowLeft } from 'lucide-react';
-import Home from './components/Home';
-import Tarot from './components/Tarot';
-import Astrology from './components/Astrology';
-import Bazi from './components/Bazi';
+import { ArrowLeft } from 'lucide-react';
 import { type ModuleType } from './types';
+
+const Home = lazy(() => import('./components/Home'));
+const Tarot = lazy(() => import('./components/Tarot'));
+const Astrology = lazy(() => import('./components/Astrology'));
+const Bazi = lazy(() => import('./components/Bazi'));
 
 function App() {
   const [currentModule, setCurrentModule] = useState<ModuleType>('home');
@@ -67,12 +68,14 @@ function App() {
 
       {/* Main Content */}
       <main className="pt-28 md:pt-36 px-4 sm:px-8 md:px-12 pb-24 md:pb-32 flex-1 w-full max-w-full overflow-hidden box-border">
-        <AnimatePresence mode="wait">
-          {currentModule === 'home' && <Home key="home" setModule={setCurrentModule} />}
-          {currentModule === 'tarot' && <Tarot key="tarot" />}
-          {currentModule === 'astrology' && <Astrology key="astrology" />}
-          {currentModule === 'bazi' && <Bazi key="bazi" />}
-        </AnimatePresence>
+        <Suspense fallback={<div className="flex items-center justify-center p-20 text-[#C5A059] font-sans tracking-widest text-sm animate-pulse">载入模块中...</div>}>
+          <AnimatePresence mode="wait">
+            {currentModule === 'home' && <Home key="home" setModule={setCurrentModule} />}
+            {currentModule === 'tarot' && <Tarot key="tarot" />}
+            {currentModule === 'astrology' && <Astrology key="astrology" />}
+            {currentModule === 'bazi' && <Bazi key="bazi" />}
+          </AnimatePresence>
+        </Suspense>
       </main>
       
       {/* Footer */}
