@@ -40,7 +40,7 @@ export default function Home({ setModule }: HomeProps) {
       className="flex flex-col justify-center min-h-[70vh] w-full max-w-6xl mx-auto"
     >
     <div className="max-w-3xl mb-10 md:mb-12 self-start">
-        <h2 className="text-[20px] min-[375px]:text-[22px] sm:text-3xl lg:text-5xl whitespace-nowrap font-light leading-tight mb-3 md:mb-4 text-white/90 font-serif tracking-widest">
+        <h2 className="text-[18px] min-[375px]:text-[22px] md:text-3xl lg:text-5xl whitespace-nowrap font-light leading-tight mb-3 md:mb-4 text-white/90 font-serif tracking-widest">
           在星空与阴影中揭示宿命。
         </h2>
         <p className="text-sm md:text-lg font-sans text-white/40 max-w-xl font-light leading-relaxed">

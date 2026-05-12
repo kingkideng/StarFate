@@ -20,7 +20,7 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] relative font-sans text-white font-light selection:bg-[#d4af37]/30">
+    <div className="flex flex-col min-h-[100dvh] relative font-sans text-white font-light selection:bg-[#d4af37]/30">
       {/* Dynamic Background */}
       <div className="atmosphere-bg" />
       
@@ -29,8 +29,8 @@ function App() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.8 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 w-full px-safe md:px-12 flex justify-between items-end border-b border-white/10 ${
-          isScrolled ? 'bg-[#050508]/90 backdrop-blur-md pt-safe pb-4' : 'bg-transparent pt-safe-10 pb-6'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 w-full px-6 sm:px-8 md:px-12 flex justify-between items-end border-b border-white/10 ${
+          isScrolled ? 'bg-[#050508]/90 backdrop-blur-md pt-6 md:pt-8 pb-4' : 'bg-transparent pt-10 md:pt-14 pb-6'
         }`}
       >
         <div 
@@ -66,7 +66,7 @@ function App() {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="pt-28 md:pt-32 px-safe md:px-12 min-h-[calc(100dvh-80px)]">
+      <main className="pt-28 md:pt-36 px-4 sm:px-8 md:px-12 pb-24 md:pb-32 flex-1 w-full max-w-[100vw] overflow-x-hidden box-border">
         <AnimatePresence mode="wait">
           {currentModule === 'home' && <Home key="home" setModule={setCurrentModule} />}
           {currentModule === 'tarot' && <Tarot key="tarot" />}
@@ -76,7 +76,7 @@ function App() {
       </main>
       
       {/* Footer */}
-      <footer className="w-full pb-safe pt-8 px-safe md:px-12 flex justify-between items-center bg-[#08080C] border-t border-white/5 mt-auto relative z-10">
+      <footer className="w-full pb-8 pt-6 px-6 sm:px-8 md:px-12 flex justify-between items-center bg-[#08080C] border-t border-white/5 mt-auto relative z-10 shrink-0">
         <div className="flex gap-4 md:gap-8 text-[10px] font-sans uppercase tracking-[0.3em] text-white/30 hidden sm:flex">
           <span>上升：天蝎</span>
           <span>月相：亏凸月</span>
