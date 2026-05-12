@@ -66,7 +66,7 @@ function App() {
       </motion.nav>
 
       {/* Main Content */}
-      <main className="pt-28 md:pt-36 px-4 sm:px-8 md:px-12 pb-24 md:pb-32 flex-1 w-full max-w-[100vw] overflow-x-hidden box-border">
+      <main className="pt-28 md:pt-36 px-4 sm:px-8 md:px-12 pb-24 md:pb-32 flex-1 w-full overflow-hidden box-border">
         <AnimatePresence mode="wait">
           {currentModule === 'home' && <Home key="home" setModule={setCurrentModule} />}
           {currentModule === 'tarot' && <Tarot key="tarot" />}

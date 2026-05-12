@@ -43,9 +43,9 @@ export default function Bazi() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6 }}
-      className="max-w-4xl mx-auto w-full px-4 pb-20"
+      className="max-w-4xl mx-auto w-full pb-20"
     >
-      <div className="text-center mb-16">
+      <div className="text-center mb-16 relative">
         <h2 className="text-4xl font-serif gold-text mb-4 tracking-widest">八字命理</h2>
         <p className="text-white/60 font-serif">
           洞隐乾坤，顺应流年，照见一生的命格图谱。
@@ -53,9 +53,9 @@ export default function Bazi() {
       </div>
 
       {!report && (
-        <div className="glass-panel p-6 sm:p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30">
-          <div className="space-y-8">
-            <div className="flex flex-col">
+        <div className="glass-panel w-full p-5 sm:p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30 box-border">
+          <div className="space-y-8 w-full max-w-full">
+            <div className="flex flex-col min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">性别</span>
               </label>
@@ -71,7 +71,7 @@ export default function Bazi() {
               </div>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">阳历出生日期</span>
               </label>
@@ -79,11 +79,11 @@ export default function Bazi() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark]"
+                className="w-full min-w-0 bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark]"
               />
             </div>
             
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">出生时间 (时辰)</span>
               </label>
@@ -91,11 +91,11 @@ export default function Bazi() {
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark]"
+                className="w-full min-w-0 bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors [color-scheme:dark]"
               />
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-0">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">出生地点 (城市/省份)</span>
               </label>
@@ -104,7 +104,7 @@ export default function Bazi() {
                 placeholder="例如: 中国 浙江 杭州"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors"
+                className="w-full min-w-0 bg-black/40 border border-[#C5A059]/30 rounded-xl p-4 text-white font-sans focus:outline-none focus:border-[#C5A059] transition-colors"
                 autoComplete="off"
               />
             </div>
