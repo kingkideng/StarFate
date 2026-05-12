@@ -5,6 +5,7 @@ import { Sparkles, Loader2 } from 'lucide-react';
 import { TAROT_CARDS } from '../types';
 import { interpretTarotStream } from '../lib/gemini';
 import { cn } from '../lib/utils';
+import Clarification from './Clarification';
 
 export default function Tarot() {
   const [selectedCards, setSelectedCards] = useState<typeof TAROT_CARDS>([]);
@@ -183,10 +184,12 @@ export default function Tarot() {
           className="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C5A059]/50 to-transparent" />
-          <div className="markdown-body">
+          <div className="markdown-body mt-8">
             <ReactMarkdown>{report}</ReactMarkdown>
           </div>
           
+          <Clarification context={report} />
+
           <div className="mt-12 pt-8 border-t border-[#C5A059]/20 flex justify-center">
             <button
               onClick={reset}

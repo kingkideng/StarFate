@@ -3,21 +3,22 @@ import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { Moon, Loader2 } from 'lucide-react';
 import { interpretBaziStream } from '../lib/gemini';
+import Clarification from './Clarification';
 
 export default function Bazi() {
-  const [gender, setGender] = useState(() => localStorage.getItem('bazi_gender') || '男');
-  const [date, setDate] = useState(() => localStorage.getItem('bazi_date') || '1990-01-01');
-  const [time, setTime] = useState(() => localStorage.getItem('bazi_time') || '12:00');
-  const [location, setLocation] = useState(() => localStorage.getItem('bazi_location') || '');
+  const [gender, setGender] = useState(() => localStorage.getItem('user_profile_gender') || '男');
+  const [date, setDate] = useState(() => localStorage.getItem('user_profile_date') || '1990-01-01');
+  const [time, setTime] = useState(() => localStorage.getItem('user_profile_time') || '12:00');
+  const [location, setLocation] = useState(() => localStorage.getItem('user_profile_location') || '');
   
   const [report, setReport] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('bazi_gender', gender);
-    localStorage.setItem('bazi_date', date);
-    localStorage.setItem('bazi_time', time);
-    localStorage.setItem('bazi_location', location);
+    localStorage.setItem('user_profile_gender', gender);
+    localStorage.setItem('user_profile_date', date);
+    localStorage.setItem('user_profile_time', time);
+    localStorage.setItem('user_profile_location', location);
   }, [gender, date, time, location]);
 
   const generateReport = async () => {
@@ -144,10 +145,12 @@ export default function Bazi() {
             {date.replace(/-/g, '/')} {time} 生人
           </div>
 
-          <div className="markdown-body">
+          <div className="markdown-body mt-8">
             <ReactMarkdown>{report}</ReactMarkdown>
           </div>
           
+          <Clarification context={report} />
+
           <div className="mt-12 pt-8 border-t border-[#C5A059]/20 flex justify-center">
             <button
               onClick={() => setReport('')}

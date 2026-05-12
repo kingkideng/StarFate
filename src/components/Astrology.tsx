@@ -3,26 +3,29 @@ import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import { Loader2, Sparkles } from 'lucide-react';
 import { interpretAstrologyStream } from '../lib/gemini';
+import Clarification from './Clarification';
 
 export default function Astrology() {
-  const [date, setDate] = useState(() => localStorage.getItem('astro_date') || '1990-01-01');
-  const [time, setTime] = useState(() => localStorage.getItem('astro_time') || '12:00');
-  const [location, setLocation] = useState(() => localStorage.getItem('astro_location') || '');
+  const [gender, setGender] = useState(() => localStorage.getItem('user_profile_gender') || '男');
+  const [date, setDate] = useState(() => localStorage.getItem('user_profile_date') || '1990-01-01');
+  const [time, setTime] = useState(() => localStorage.getItem('user_profile_time') || '12:00');
+  const [location, setLocation] = useState(() => localStorage.getItem('user_profile_location') || '');
   
   const [report, setReport] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('astro_date', date);
-    localStorage.setItem('astro_time', time);
-    localStorage.setItem('astro_location', location);
-  }, [date, time, location]);
+    localStorage.setItem('user_profile_gender', gender);
+    localStorage.setItem('user_profile_date', date);
+    localStorage.setItem('user_profile_time', time);
+    localStorage.setItem('user_profile_location', location);
+  }, [gender, date, time, location]);
 
   const generateReport = async () => {
     setLoading(true);
     setReport('');
     try {
-      const stream = await interpretAstrologyStream(date, time, location);
+      const stream = await interpretAstrologyStream(gender, date, time, location);
       for await (const text of stream) {
         setReport(prev => prev + text);
       }
@@ -52,6 +55,22 @@ export default function Astrology() {
       {!report && (
         <div className="glass-panel p-8 md:p-12 rounded-3xl max-w-2xl mx-auto border border-[#C5A059]/30">
           <div className="space-y-8">
+            <div className="flex flex-col">
+              <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
+                <span className="tracking-widest">性别</span>
+              </label>
+              <div className="flex gap-6">
+                <label className="flex items-center space-x-2 cursor-pointer text-white/80 hover:text-white transition-colors">
+                  <input type="radio" name="astro_gender" value="男" checked={gender === '男'} onChange={(e) => setGender(e.target.value)} className="accent-[#C5A059] w-4 h-4" />
+                  <span className="tracking-widest">男</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer text-white/80 hover:text-white transition-colors">
+                  <input type="radio" name="astro_gender" value="女" checked={gender === '女'} onChange={(e) => setGender(e.target.value)} className="accent-[#C5A059] w-4 h-4" />
+                  <span className="tracking-widest">女</span>
+                </label>
+              </div>
+            </div>
+
             <div className="flex flex-col">
               <label className="text-[#C5A059] font-serif mb-2 flex items-center space-x-2">
                 <span className="tracking-widest">出生日期</span>
@@ -126,10 +145,12 @@ export default function Astrology() {
             {date.replace(/-/g, '/')} {time} 生人
           </div>
 
-          <div className="markdown-body">
+          <div className="markdown-body mt-8">
             <ReactMarkdown>{report}</ReactMarkdown>
           </div>
           
+          <Clarification context={report} />
+
           <div className="mt-12 pt-8 border-t border-[#C5A059]/20 flex justify-center">
             <button
               onClick={() => setReport('')}

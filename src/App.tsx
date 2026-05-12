@@ -84,7 +84,7 @@ function App() {
         </div>
         <div className="flex items-center gap-4 ml-auto">
           <div className="w-2 h-2 rounded-full bg-[#C5A059] shadow-[0_0_8px_#C5A059]"></div>
-          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-white/60">系统已上线</span>
+          <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-white/60">© 2026 StarFate. Deciphered by Jaden.</span>
         </div>
       </footer>
     </div>

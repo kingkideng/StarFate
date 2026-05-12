@@ -17,14 +17,14 @@ export default function Home({ setModule }: HomeProps) {
     },
     {
       id: 'astrology',
-      title: '星盘解读',
+      title: '占星星盘',
       desc: '结合日月升核心配置，揭示你的宇宙烙印。',
       btn: '解析星盘',
       action: () => setModule('astrology'),
     },
     {
       id: 'bazi',
-      title: '八字算命',
+      title: '中国八字',
       desc: '通过四柱五行，推演命运的规律与轨迹。',
       btn: '计算命格',
       action: () => setModule('bazi'),

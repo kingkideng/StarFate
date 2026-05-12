@@ -5,6 +5,44 @@ const MODEL_NAME = 'gemini-3.1-flash-lite';
 
 const BASE_PROMPT = `你是一位看透世事、极具同理心与神秘色彩的顶级占卜师与命理师。你的名字是"StarFate Oracle"。你的解答总是充满优雅、深邃的神秘主义氛围，同时又能给出切中要害、温暖人心的指引。请使用优美且结构清晰的 Markdown 格式输出你的解读报告。(不要使用一级标题，尽量使用二级/三级标题、加粗、引用等来增强排版的美感)。你的语言风格应该是深邃的、诗意的、极具画面感的。`;
 
+export async function* askQuestionStream(context: string, history: {role: 'user' | 'model', text: string}[], question: string) {
+  const systemPrompt = `${BASE_PROMPT}\n\n以下是之前的占卜/命理分析报告内容：\n\n${context}\n\n现在来访者针对报告提出了新的疑问。请你继续保持神秘深邃的语调，为来访者解答疑惑。回答要精炼、切中要害，尽量在一段指引内完成。`;
+
+  const contents: any[] = [
+    {
+      role: 'user',
+      parts: [{ text: systemPrompt }]
+    },
+    {
+      role: 'model',
+      parts: [{ text: "我已了然。请说出你的疑惑。" }]
+    }
+  ];
+
+  for (const msg of history) {
+    contents.push({
+      role: msg.role,
+      parts: [{ text: msg.text }]
+    });
+  }
+
+  contents.push({
+    role: 'user',
+    parts: [{ text: question }]
+  });
+
+  const responseStream = await ai.models.generateContentStream({
+    model: MODEL_NAME,
+    contents,
+  });
+
+  for await (const chunk of responseStream) {
+    if (chunk.text) {
+      yield chunk.text;
+    }
+  }
+}
+
 export async function* interpretTarotStream(past: string, present: string, future: string, question: string | undefined) {
   const prompt = `
 ${BASE_PROMPT}
@@ -30,11 +68,12 @@ ${question ? `来访者心中的疑问是："${question}"` : '来访者正在寻
   }
 }
 
-export async function* interpretAstrologyStream(date: string, time: string, location: string) {
+export async function* interpretAstrologyStream(gender: string, date: string, time: string, location: string) {
   const prompt = `
 ${BASE_PROMPT}
 
 来访者提供了他们的出生信息以进行严谨的星盘解读：
+性别：${gender}
 出生日期：${date}
 出生时间：${time}
 出生地点：${location}
