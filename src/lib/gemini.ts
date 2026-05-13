@@ -1,16 +1,25 @@
 const BASE_PROMPT = `你是一位看透世事、极具同理心与神秘色彩的顶级占卜师与命理师。你的名字是"StarFate Oracle"。你的解答总是充满优雅、深邃的神秘主义氛围，同时又能给出切中要害、温暖人心的指引。请使用优美且结构清晰的 Markdown 格式输出你的解读报告。(不要使用一级标题，尽量使用二级/三级标题、加粗、引用等来增强排版的美感)。你的语言风格应该是深邃的、诗意的、极具画面感的。`;
 
-async function* fetchGeminiStream(contents: any) {
+async function* fetchAIStream(messages: any) {
   const response = await fetch('/api/gemini', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ contents }),
+    body: JSON.stringify({ messages }),
   });
 
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status}`);
+    let errorMsg = `API Error: ${response.status}`;
+    try {
+      const errorData = await response.json();
+      if (errorData.error) {
+        errorMsg = errorData.error;
+      }
+    } catch(e) {
+      // Ignore JSON parsing error
+    }
+    throw new Error(errorMsg);
   }
 
   const reader = response.body?.getReader();
@@ -27,25 +36,29 @@ async function* fetchGeminiStream(contents: any) {
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n\n');
+      const lines = buffer.split('\n');
+      
+      // Keep the last incomplete line in the buffer
       buffer = lines.pop() || '';
 
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const dataStr = line.slice(6);
+        const trimmed = line.trim();
+        if (trimmed.startsWith('data: ')) {
+          const dataStr = trimmed.slice(6);
           if (dataStr === '[DONE]') {
             return;
           }
           try {
             const data = JSON.parse(dataStr);
             if (data.error) {
-              throw new Error(data.error);
+              throw new Error(data.error.message || JSON.stringify(data.error));
             }
-            if (data.text) {
-              yield data.text;
+            const content = data.choices?.[0]?.delta?.content;
+            if (content) {
+              yield content;
             }
           } catch (e) {
-            console.error('Error parsing SSE data', e);
+            // some chunks might be partial or contain ping, we ignore parse errors
           }
         }
       }
@@ -58,30 +71,30 @@ async function* fetchGeminiStream(contents: any) {
 export async function* askQuestionStream(context: string, history: {role: 'user' | 'model', text: string}[], question: string) {
   const systemPrompt = `${BASE_PROMPT}\n\n以下是之前的占卜/命理分析报告内容：\n\n${context}\n\n现在来访者针对报告提出了新的疑问。请你继续保持神秘深邃的语调，为来访者解答疑惑。回答要精炼、切中要害，尽量在一段指引内完成。`;
 
-  const contents: any[] = [
+  const messages: any[] = [
     {
-      role: 'user',
-      parts: [{ text: systemPrompt }]
+      role: 'system',
+      content: systemPrompt
     },
     {
-      role: 'model',
-      parts: [{ text: "我已了然。请说出你的疑惑。" }]
+      role: 'assistant',
+      content: "我已了然。请说出你的疑惑。"
     }
   ];
 
   for (const msg of history) {
-    contents.push({
-      role: msg.role,
-      parts: [{ text: msg.text }]
+    messages.push({
+      role: msg.role === 'model' ? 'assistant' : 'user',
+      content: msg.text
     });
   }
 
-  contents.push({
+  messages.push({
     role: 'user',
-    parts: [{ text: question }]
+    content: question
   });
 
-  yield* fetchGeminiStream(contents);
+  yield* fetchAIStream(messages);
 }
 
 export async function* interpretTarotStream(past: string, present: string, future: string, question: string | undefined) {
@@ -97,7 +110,7 @@ ${question ? `来访者心中的疑问是："${question}"` : '来访者正在寻
 请你深度解读这三张牌的象征意义，以及它们之间神秘的能量流转，给出一份充满启示的塔罗牌阵解读报告。
 `;
 
-  yield* fetchGeminiStream([{ role: 'user', parts: [{ text: prompt }] }]);
+  yield* fetchAIStream([{ role: 'user', content: prompt }]);
 }
 
 export async function* interpretAstrologyStream(gender: string, date: string, time: string, location: string) {
@@ -117,7 +130,7 @@ ${BASE_PROMPT}
 请以 Markdown 格式排版直接输出你的报告内容。
 `;
 
-  yield* fetchGeminiStream([{ role: 'user', parts: [{ text: prompt }] }]);
+  yield* fetchAIStream([{ role: 'user', content: prompt }]);
 }
 
 export async function* interpretBaziStream(gender: string, date: string, time: string, location: string) {
@@ -137,5 +150,5 @@ ${BASE_PROMPT}
 4. 输出一份具有东方禅意与严谨命理结合的命运趋势分析报告，指出他们性格中的力量与暗流，喜忌用神，以及人生下一阶段的转机与大运指引。
 `;
 
-  yield* fetchGeminiStream([{ role: 'user', parts: [{ text: prompt }] }]);
+  yield* fetchAIStream([{ role: 'user', content: prompt }]);
 }

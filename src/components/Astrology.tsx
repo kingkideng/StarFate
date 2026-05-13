@@ -29,9 +29,9 @@ export default function Astrology() {
       for await (const text of stream) {
         setReport(prev => prev + text);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setReport(prev => prev + '\n\n星空被乌云遮蔽，暂时无法解读星象... 请稍后再试。');
+      setReport(prev => prev + `\n\n星空被乌云遮蔽，暂时无法解读星象... ${error.message || '请稍后再试。'}`);
     } finally {
       setLoading(false);
     }

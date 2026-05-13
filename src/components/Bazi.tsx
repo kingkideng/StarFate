@@ -29,9 +29,9 @@ export default function Bazi() {
       for await (const text of stream) {
         setReport(prev => prev + text);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setReport(prev => prev + '\n\n天机不可泄露，因缘此刻难明... 请稍后再试。');
+      setReport(prev => prev + `\n\n天机不可泄露，因缘此刻难明... ${error.message || '请稍后再试。'}`);
     } finally {
       setLoading(false);
     }

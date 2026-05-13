@@ -1,10 +1,6 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-const MODEL_NAME = 'gemini-3.1-flash-lite';
 
 async function startServer() {
   const app = express();
@@ -12,34 +8,49 @@ async function startServer() {
 
   app.use(express.json());
 
-  // API route for Gemini Streaming
+  // API route for AI Streaming
   app.post("/api/gemini", async (req, res) => {
+    const apiKey = process.env.DASHSCOPE_API_KEY || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: '请配置 DASHSCOPE_API_KEY 环境变量' });
+    }
+
     try {
-      const { contents } = req.body;
+      const { messages } = req.body;
       
-      const responseStream = await ai.models.generateContentStream({
-        model: MODEL_NAME,
-        contents,
+      const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: process.env.DASHSCOPE_MODEL_NAME || 'qwen-plus',
+          messages: messages,
+          stream: true,
+        }),
       });
+
+      if (!response.ok) {
+        const errStr = await response.text();
+        return res.status(response.status).json({ error: `大模型通信失败: ${errStr}` });
+      }
 
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
 
-      for await (const chunk of responseStream) {
-        if (chunk.text) {
-          // Send each chunk as an SSE message
-          res.write(`data: ${JSON.stringify({ text: chunk.text })}\n\n`);
+      if (response.body) {
+        for await (const chunk of response.body as any) {
+          res.write(chunk);
         }
       }
-      res.write(`data: [DONE]\n\n`);
       res.end();
-    } catch (error) {
-      console.error('Gemini API Error:', error);
+    } catch (error: any) {
+      console.error('DashScope API Error:', error);
       if (!res.headersSent) {
-        res.status(500).json({ error: 'Failed to communicate with Gemini.' });
+        res.status(500).json({ error: '请求大模型异常。' });
       } else {
-        res.write(`data: ${JSON.stringify({ error: 'Generation failed.' })}\n\n`);
         res.end();
       }
     }

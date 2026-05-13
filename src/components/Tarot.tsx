@@ -44,9 +44,9 @@ export default function Tarot() {
       for await (const text of stream) {
         setReport(prev => prev + text);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setReport(prev => prev + '\n\n以太大气出现了扰动，命运的信号暂时中断... 请稍后再试。');
+      setReport(prev => prev + `\n\n以太大气出现了扰动，命运的信号暂时中断... ${error.message || '请稍后再试。'}`);
     } finally {
       setLoading(false);
     }

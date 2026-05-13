@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft, Github } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { type ModuleType } from './types';
 
 const Home = lazy(() => import('./components/Home'));
@@ -79,24 +79,13 @@ function App() {
       </main>
       
       {/* Footer */}
-      <footer className="w-full pb-8 pt-6 px-6 sm:px-8 md:px-12 flex flex-col md:flex-row justify-between items-center bg-[#08080C] border-t border-white/5 mt-auto relative z-10 shrink-0 gap-6 md:gap-0">
-        <div className="flex gap-4 md:gap-8 text-[10px] font-sans uppercase tracking-[0.3em] text-white/30 hidden md:flex md:w-1/3">
+      <footer className="w-full pb-8 pt-6 px-6 sm:px-8 md:px-12 flex justify-between items-center bg-[#08080C] border-t border-white/5 mt-auto relative z-10 shrink-0">
+        <div className="flex gap-4 md:gap-8 text-[10px] font-sans uppercase tracking-[0.3em] text-white/30 hidden sm:flex">
           <span>上升：天蝎</span>
           <span>月相：亏凸月</span>
           <span>AI 核心：活跃</span>
         </div>
-        <div className="flex items-center justify-center md:w-1/3 w-full order-last md:order-none">
-          <a 
-            href="https://github.com/kingkideng/StarFate" 
-            target="_blank" 
-            rel="noreferrer" 
-            className="flex items-center gap-2 text-xs font-sans tracking-[0.2em] text-[#C5A059]/60 hover:text-[#C5A059] transition-all"
-          >
-            <Github className="w-4 h-4" />
-            <span>StarFate</span>
-          </a>
-        </div>
-        <div className="flex items-center justify-center md:justify-end gap-4 w-full md:w-1/3">
+        <div className="flex items-center gap-4 ml-auto">
           <div className="w-2 h-2 rounded-full bg-[#C5A059] shadow-[0_0_8px_#C5A059]"></div>
           <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-white/60">© 2026 StarFate. Deciphered by Jaden.</span>
         </div>

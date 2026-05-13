@@ -40,11 +40,11 @@ export default function Clarification({ context }: { context: string }) {
         });
       }
       setTurns(t => t + 1);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       setHistory(prev => {
         const newHistory = [...prev];
-        newHistory[newHistory.length - 1].text += '\n\n迷雾遮蔽了视野，未能得到答案。';
+        newHistory[newHistory.length - 1].text += `\n\n迷雾遮蔽了视野，未能得到答案。${e.message || ''}`;
         return newHistory;
       });
     } finally {
