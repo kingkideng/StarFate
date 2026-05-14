@@ -28,6 +28,7 @@ async function chatHandler(req, res) {
         model: process.env.DASHSCOPE_MODEL_NAME || 'qwen3.6-flash-2026-04-16',
         messages,
         stream: true,
+        enable_thinking: false,
       }),
     });
 

@@ -29,6 +29,7 @@ async function startServer() {
           model: process.env.DASHSCOPE_MODEL_NAME || 'qwen3.6-flash-2026-04-16',
           messages: messages,
           stream: true,
+          enable_thinking: false,
         }),
       });
 
