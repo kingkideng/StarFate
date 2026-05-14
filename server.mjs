@@ -1,6 +1,13 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import {
+  buildAstrologyMessages,
+  calculateNatalChart,
+  geocodeWithAmap,
+  parseBirthInput,
+  requestDashScopeStream,
+} from './server-lib/astrology-core.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,6 +21,9 @@ async function chatHandler(req, res) {
   const apiKey = process.env.DASHSCOPE_API_KEY || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(500).json({ error: '请配置 DASHSCOPE_API_KEY 环境变量' });
+  }
+  if (!process.env.AMAP_API_KEY) {
+    return res.status(500).json({ error: '请配置 AMAP_API_KEY 环境变量' });
   }
 
   try {
@@ -58,8 +68,48 @@ async function chatHandler(req, res) {
   }
 }
 
+async function astrologyHandler(req, res) {
+  const apiKey = process.env.DASHSCOPE_API_KEY || process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: '请配置 DASHSCOPE_API_KEY 环境变量' });
+  }
+
+  try {
+    const input = parseBirthInput(req.body);
+    const geo = await geocodeWithAmap(input.location, process.env.AMAP_API_KEY);
+    const chart = calculateNatalChart(input, geo);
+    const messages = buildAstrologyMessages(input, geo, chart);
+    const response = await requestDashScopeStream(messages, apiKey);
+
+    if (!response.ok) {
+      const errStr = await response.text();
+      return res.status(response.status).json({ error: `大模型通信失败: ${errStr}` });
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+
+    if (response.body) {
+      for await (const chunk of response.body) {
+        res.write(chunk);
+      }
+    }
+    res.end();
+  } catch (error) {
+    console.error('Astrology API Error:', error);
+    if (!res.headersSent) {
+      res.status(400).json({ error: error?.message || '星盘计算失败，请检查出生信息。' });
+    } else {
+      res.end();
+    }
+  }
+}
+
 app.post('/api/chat', chatHandler);
 app.post('/api/gemini', chatHandler);
+app.post('/api/astrology', astrologyHandler);
 
 const distPath = path.join(__dirname, 'dist');
 app.use(express.static(distPath));

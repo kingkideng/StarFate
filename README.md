@@ -13,7 +13,7 @@
 
 ### 2. 🌌 占星星盘 (Astrology Chart)
 *   **精准定制**：需要输入用户的具体性别、出生日期、时间与地点，用于严谨的星盘校验。用户信息将在占星与八字模块之间自动互通，避免重复填写。
-*   **核心配置**：AI 自动计算并提取用户的核心宇宙烙印——“太阳”（核心意志）、“月亮”（潜意识与情感）和“上升”（人格面具）三大星座。
+*   **核心配置**：服务端先通过高德地理编码解析出生地经纬度，再用本命盘计算库提取“太阳”（核心意志）、“月亮”（潜意识与情感）和“上升”（人格面具）三大星座，AI 只负责基于确定数据解读。
 *   **灵魂洞察**：分析三大维度之间的隐秘张力、能量互动，书写一份探讨灵魂进化方向的详实占星报告。
 
 ### 3. ☯ 中国八字 (Chinese Bazi)
@@ -32,8 +32,9 @@
 *   **样式与视觉：** Tailwind CSS 搭配深色暗黑基调，中文字体优先采用本地/自托管 `霞鹜文楷 Lite`，并提供系统中文字体兜底，营造神秘学宿命感与高级感。
 *   **动画加载：** 采用 `motion/react` 打造如梦似幻的丝滑动画表现。
 *   **大语言模型：** 阿里云百炼 DashScope OpenAI-compatible API，默认模型为 `qwen3.6-flash-2026-04-16`，通过服务端代理进行流式输出，确保 API Key 不暴露到浏览器。
+*   **星盘计算：** 高德地图 Web 服务地理编码 + `circular-natal-horoscope-js`，在服务端完成经纬度解析、本命盘计算与结构化星盘注入，避免大模型猜测太阳、月亮和上升。
 *   **静态资源：** 塔罗牌面使用项目内置 WebP 资源，避免依赖外部图床；字体运行时不再依赖 Google Fonts 或 jsDelivr。
-*   **API 代理：** 前端通过 `/api/chat` 请求服务端流式接口，兼容旧的 `/api/gemini` 路径。
+*   **API 代理：** 前端通过 `/api/chat` 请求通用流式接口，占星模块通过 `/api/astrology` 完成“地理编码 -> 星盘计算 -> AI 解读”的闭环，兼容旧的 `/api/gemini` 路径。
 
 ---
 
@@ -42,12 +43,15 @@
 本项目原生支持标准的 Docker 部署，并配置了 **GitHub Actions** workflows，方便一键构建并推送到 GitHub Container Registry (ghcr.io)。
 
 ### 环境变量
-使用前需确保有有效的阿里云百炼 DashScope API Key：
+使用前需确保有有效的阿里云百炼 DashScope API Key。占星模块还需要高德开放平台 Web 服务 API Key，用于出生地地理编码：
 
 \`\`\`env
 DASHSCOPE_API_KEY=your_dashscope_api_key_here
 DASHSCOPE_MODEL_NAME=qwen3.6-flash-2026-04-16
+AMAP_API_KEY=your_amap_web_service_key_here
 \`\`\`
+
+`AMAP_API_KEY` 只在服务端使用，不会暴露到浏览器。部署到 Vercel 时，请在项目的 Environment Variables 中同时配置 `DASHSCOPE_API_KEY`、`DASHSCOPE_MODEL_NAME` 和 `AMAP_API_KEY`，Preview 与 Production 环境都需要按需勾选。
 
 ### 字体
 霞鹜文楷 Lite 已通过 `public/fonts/LXGWWenKaiLite-Regular.ttf` 自托管。项目会优先使用该字体，并在字体不可用时回退到系统中文字体。
@@ -64,7 +68,10 @@ DASHSCOPE_MODEL_NAME=qwen3.6-flash-2026-04-16
 docker build -t starfate-app .
 
 # 运行容器并映射 3000 端口
-docker run -d -p 3000:3000 -e DASHSCOPE_API_KEY=你的密钥 starfate-app
+docker run -d -p 3000:3000 \
+  -e DASHSCOPE_API_KEY=你的百炼密钥 \
+  -e AMAP_API_KEY=你的高德Web服务密钥 \
+  starfate-app
 \`\`\`
 服务启动后，访问 \`http://localhost:3000\` 即可探索属于你的宿命轨迹。
 
@@ -73,5 +80,5 @@ docker run -d -p 3000:3000 -e DASHSCOPE_API_KEY=你的密钥 starfate-app
 \`\`\`bash
 npm ci
 npm run build
-DASHSCOPE_API_KEY=你的密钥 npm start
+DASHSCOPE_API_KEY=你的百炼密钥 AMAP_API_KEY=你的高德Web服务密钥 npm start
 \`\`\`

@@ -1,12 +1,12 @@
 const BASE_PROMPT = `你是一位看透世事、极具同理心与神秘色彩的顶级占卜师与命理师。你的名字是"StarFate Oracle"。你的解答总是充满优雅、深邃的神秘主义氛围，同时又能给出切中要害、温暖人心的指引。请使用优美且结构清晰的 Markdown 格式输出你的解读报告。(不要使用一级标题，尽量使用二级/三级标题、加粗、引用等来增强排版的美感)。你的语言风格应该是深邃的、诗意的、极具画面感的。`;
 
-async function* fetchAIStream(messages: any) {
-  const response = await fetch('/api/chat', {
+async function* fetchStream(endpoint: string, body: Record<string, unknown>) {
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -68,6 +68,10 @@ async function* fetchAIStream(messages: any) {
   }
 }
 
+async function* fetchAIStream(messages: any) {
+  yield* fetchStream('/api/chat', { messages });
+}
+
 export async function* askQuestionStream(context: string, history: {role: 'user' | 'model', text: string}[], question: string) {
   const systemPrompt = `${BASE_PROMPT}\n\n以下是之前的占卜/命理分析报告内容：\n\n${context}\n\n现在来访者针对报告提出了新的疑问。请你继续保持神秘深邃的语调，为来访者解答疑惑。回答要精炼、切中要害，尽量在一段指引内完成。`;
 
@@ -114,23 +118,7 @@ ${question ? `来访者心中的疑问是："${question}"` : '来访者正在寻
 }
 
 export async function* interpretAstrologyStream(gender: string, date: string, time: string, location: string) {
-  const prompt = `
-${BASE_PROMPT}
-
-来访者提供了他们的出生信息以进行严谨的星盘解读：
-性别：${gender}
-出生日期：${date}
-出生时间：${time}
-出生地点：${location}
-
-作为顶级的占星师，在此次解读中，你需要：
-1. 精准推算出（或分析出最可能的）【太阳星座】、【月亮星座】和【上升星座】，并在报告开头明确指出这三个核心配置。
-2. 结合这三个核心配置，为来访者书写一份深入灵魂的解读报告。阐述他们在性格上的隐秘张力、情感深处的渴求，以及灵魂进化的最终方向。
-
-请以 Markdown 格式排版直接输出你的报告内容。
-`;
-
-  yield* fetchAIStream([{ role: 'user', content: prompt }]);
+  yield* fetchStream('/api/astrology', { gender, date, time, location });
 }
 
 export async function* interpretBaziStream(gender: string, date: string, time: string, location: string) {
