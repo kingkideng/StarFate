@@ -177,3 +177,28 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 .markdown-body li {
   margin-bottom: 0.5rem;
 }
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.markdown-body th {
+  color: #d4af37;
+  font-weight: 500;
+  background: rgba(212, 175, 55, 0.08);
+}

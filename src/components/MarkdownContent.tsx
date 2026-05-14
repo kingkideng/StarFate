@@ -1,4 +1,5 @@
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface MarkdownContentProps {
   children: string;
@@ -23,5 +24,5 @@ function getStableMarkdown(markdown: string, streaming?: boolean) {
 }
 
 export default function MarkdownContent({ children, streaming }: MarkdownContentProps) {
-  return <ReactMarkdown>{getStableMarkdown(children, streaming)}</ReactMarkdown>;
+  return <ReactMarkdown remarkPlugins={[remarkGfm]}>{getStableMarkdown(children, streaming)}</ReactMarkdown>;
 }
