@@ -1,7 +1,7 @@
 const BASE_PROMPT = `你是一位看透世事、极具同理心与神秘色彩的顶级占卜师与命理师。你的名字是"StarFate Oracle"。你的解答总是充满优雅、深邃的神秘主义氛围，同时又能给出切中要害、温暖人心的指引。请使用优美且结构清晰的 Markdown 格式输出你的解读报告。(不要使用一级标题，尽量使用二级/三级标题、加粗、引用等来增强排版的美感)。你的语言风格应该是深邃的、诗意的、极具画面感的。`;
 
 async function* fetchAIStream(messages: any) {
-  const response = await fetch('/api/gemini', {
+  const response = await fetch('/api/chat', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ async function* fetchAIStream(messages: any) {
               yield content;
             }
           } catch (e) {
-            // some chunks might be partial or contain ping, we ignore parse errors
+            // Some chunks can be comments, pings, or provider-specific control frames.
           }
         }
       }

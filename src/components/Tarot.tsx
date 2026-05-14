@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { motion } from 'motion/react';
-import ReactMarkdown from 'react-markdown';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { TAROT_CARDS } from '../types';
 import { interpretTarotStream } from '../lib/gemini';
 import { cn } from '../lib/utils';
 import Clarification from './Clarification';
+
+const MarkdownContent = lazy(() => import('./MarkdownContent'));
 
 export default function Tarot() {
   const [selectedCards, setSelectedCards] = useState<typeof TAROT_CARDS>([]);
@@ -125,6 +126,10 @@ export default function Tarot() {
                         <img 
                           src={card.image} 
                           alt={card.zhName}
+                          width={475}
+                          height={816}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover rounded shadow-[0_0_15px_rgba(197,160,89,0.2)]"
                         />
                       </div>
@@ -133,7 +138,7 @@ export default function Tarot() {
                   
                   {/* Back of card */}
                   <div className={cn(
-                    "absolute inset-0 backface-hidden rotate-y-180 border border-white/10 rounded-xl overflow-hidden glass-panel flex flex-col justify-center items-center bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]",
+                    "tarot-card-back absolute inset-0 backface-hidden rotate-y-180 border border-white/10 rounded-xl overflow-hidden glass-panel flex flex-col justify-center items-center",
                     card && "opacity-0 pointer-events-none"
                   )}>
                     <div className="w-16 h-16 border border-[#C5A059]/40 rounded-full flex items-center justify-center">
@@ -185,7 +190,9 @@ export default function Tarot() {
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#C5A059]/50 to-transparent" />
           <div className="markdown-body mt-8">
-            <ReactMarkdown>{report}</ReactMarkdown>
+            <Suspense fallback={<div className="text-[#C5A059]/70 animate-pulse">星图排版中...</div>}>
+              <MarkdownContent streaming={loading}>{report}</MarkdownContent>
+            </Suspense>
           </div>
           
           <Clarification context={report} />

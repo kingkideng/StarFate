@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { type ModuleType } from '../types';
 
 interface HomeProps {

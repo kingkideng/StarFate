@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { lazy, Suspense, useState, useRef, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
 import { askQuestionStream } from '../lib/gemini';
+
+const MarkdownContent = lazy(() => import('./MarkdownContent'));
 
 export default function Clarification({ context }: { context: string }) {
   const [history, setHistory] = useState<{role: 'user' | 'model', text: string}[]>([]);
@@ -60,7 +61,11 @@ export default function Clarification({ context }: { context: string }) {
         {history.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[85%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-[#C5A059]/20 text-[#C5A059] rounded-tr-sm' : 'bg-white/5 border border-white/10 text-white/80 rounded-tl-sm markdown-body'}`}>
-              {msg.role === 'model' ? <ReactMarkdown>{msg.text}</ReactMarkdown> : msg.text}
+              {msg.role === 'model' ? (
+                <Suspense fallback={<span className="text-[#C5A059]/70">排版中...</span>}>
+                  <MarkdownContent streaming={loading && i === history.length - 1}>{msg.text}</MarkdownContent>
+                </Suspense>
+              ) : msg.text}
             </div>
           </div>
         ))}

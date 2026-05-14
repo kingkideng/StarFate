@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Github } from 'lucide-react';
 import { type ModuleType } from './types';
 
 const Home = lazy(() => import('./components/Home'));
@@ -79,13 +79,23 @@ function App() {
       </main>
       
       {/* Footer */}
-      <footer className="w-full pb-8 pt-6 px-6 sm:px-8 md:px-12 flex justify-between items-center bg-[#08080C] border-t border-white/5 mt-auto relative z-10 shrink-0">
-        <div className="flex gap-4 md:gap-8 text-[10px] font-sans uppercase tracking-[0.3em] text-white/30 hidden sm:flex">
+      <footer className="w-full pb-8 pt-6 px-6 sm:px-8 md:px-12 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center bg-[#08080C] border-t border-white/5 mt-auto relative z-10 shrink-0">
+        <div className="hidden sm:flex gap-4 md:gap-8 text-[10px] font-sans uppercase tracking-[0.3em] text-white/30 justify-self-start">
           <span>上升：天蝎</span>
           <span>月相：亏凸月</span>
           <span>AI 核心：活跃</span>
         </div>
-        <div className="flex items-center gap-4 ml-auto">
+        <a
+          href="https://github.com/kingkideng/StarFate"
+          target="_blank"
+          rel="noreferrer"
+          className="justify-self-center inline-flex items-center gap-2 text-[11px] font-sans uppercase tracking-[0.22em] text-white/45 hover:text-[#C5A059] transition-colors"
+          aria-label="Open StarFate on GitHub"
+        >
+          <Github className="w-4 h-4" />
+          <span>starfate</span>
+        </a>
+        <div className="flex items-center gap-4 justify-self-center sm:justify-self-end">
           <div className="w-2 h-2 rounded-full bg-[#C5A059] shadow-[0_0_8px_#C5A059]"></div>
           <span className="text-[10px] font-sans uppercase tracking-[0.2em] text-white/60">© 2026 StarFate. Deciphered by Jaden.</span>
         </div>

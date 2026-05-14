@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import ReactMarkdown from 'react-markdown';
 import { Loader2, Sparkles } from 'lucide-react';
 import { interpretAstrologyStream } from '../lib/gemini';
 import Clarification from './Clarification';
+
+const MarkdownContent = lazy(() => import('./MarkdownContent'));
 
 export default function Astrology() {
   const [gender, setGender] = useState(() => localStorage.getItem('user_profile_gender') || '男');
@@ -146,7 +147,9 @@ export default function Astrology() {
           </div>
 
           <div className="markdown-body mt-8">
-            <ReactMarkdown>{report}</ReactMarkdown>
+            <Suspense fallback={<div className="text-[#C5A059]/70 animate-pulse">星图排版中...</div>}>
+              <MarkdownContent streaming={loading}>{report}</MarkdownContent>
+            </Suspense>
           </div>
           
           <Clarification context={report} />

@@ -4,7 +4,7 @@
 
 ## 🔮 核心功能 (Features)
 
-目前应用包含三大核心模块，所有解读均由强大的 AI 引擎（Gemini）结合专业命理与神秘学知识自动生成，兼具专业性与极高审美：
+目前应用包含三大核心模块，所有解读均由 DashScope 大模型结合专业命理与神秘学知识自动生成，兼具专业性与极高审美：
 
 ### 1. 🎴 塔罗指引 (Tarot Deck)
 *   **经典牌阵**：采用经典的韦特塔罗牌阵（过去、现在、未来 3 张牌）。
@@ -29,9 +29,11 @@
 ## 🛠️ 技术栈 (Tech Stack)
 
 *   **核心框架：** React 18 / Vite / TypeScript
-*   **样式与视觉：** Tailwind CSS 搭配深色暗黑基调，中文字体采用 `霞鹜文楷 Lite`，英文字体结合衬线字体，营造极致的神秘学宿命感与高级感。
+*   **样式与视觉：** Tailwind CSS 搭配深色暗黑基调，中文字体优先采用本地/自托管 `霞鹜文楷 Lite`，并提供系统中文字体兜底，营造神秘学宿命感与高级感。
 *   **动画加载：** 采用 `motion/react` 打造如梦似幻的丝滑动画表现。
-*   **大语言模型：** `@google/genai` (模型采用最新的流式输出 `gemini-3.1-flash-lite`)，搭配定制化的占卜与命理学大师 Prompt，确保回答的严谨程度与文笔美感。
+*   **大语言模型：** 阿里云百炼 DashScope OpenAI-compatible API，默认模型为 `qwen3.6-flash-2026-04-16`，通过服务端代理进行流式输出，确保 API Key 不暴露到浏览器。
+*   **静态资源：** 塔罗牌面使用项目内置 WebP 资源，避免依赖外部图床；字体运行时不再依赖 Google Fonts 或 jsDelivr。
+*   **API 代理：** 前端通过 `/api/chat` 请求服务端流式接口，兼容旧的 `/api/gemini` 路径。
 
 ---
 
@@ -39,22 +41,37 @@
 
 本项目原生支持标准的 Docker 部署，并配置了 **GitHub Actions** workflows，方便一键构建并推送到 GitHub Container Registry (ghcr.io)。
 
-### 环境变量限制
-使用前需确保有有效的 Gemini API 密钥：
-\`GEMINI_API_KEY=your_api_key_here\`
+### 环境变量
+使用前需确保有有效的阿里云百炼 DashScope API Key：
+
+\`\`\`env
+DASHSCOPE_API_KEY=your_dashscope_api_key_here
+DASHSCOPE_MODEL_NAME=qwen3.6-flash-2026-04-16
+\`\`\`
+
+### 字体
+霞鹜文楷 Lite 已通过 `public/fonts/LXGWWenKaiLite-Regular.ttf` 自托管。项目会优先使用该字体，并在字体不可用时回退到系统中文字体。
 
 ### 依赖 GitHub Actions 自动构建 (推荐)
 1. Fork 本仓库。
-2. 在你仓库的 **Settings -> Secrets and variables -> Actions** 中，添加一个新的 Secret，命名为 \`GEMINI_API_KEY\`。
+2. 在你仓库的 **Settings -> Secrets and variables -> Actions** 中，添加一个新的 Secret，命名为 \`DASHSCOPE_API_KEY\`。
 3. 推送代码到 \`main\` 或 \`master\` 分支，GitHub Actions 将会自动打包构建 Docker 镜像，并推送到你账户下的 \`ghcr.io\`。
 4. 你的服务器只需登录 GitHub 镜像服务，随后通过 \`docker pull\` 拉取运行即可对外提供服务。
 
 ### 通过 Docker 本地构建
 \`\`\`bash
-# 构建镜像并传入 API Key
-docker build --build-arg GEMINI_API_KEY=你的密钥 -t starfate-app .
+# 构建镜像
+docker build -t starfate-app .
 
 # 运行容器并映射 3000 端口
-docker run -d -p 3000:3000 starfate-app
+docker run -d -p 3000:3000 -e DASHSCOPE_API_KEY=你的密钥 starfate-app
 \`\`\`
 服务启动后，访问 \`http://localhost:3000\` 即可探索属于你的宿命轨迹。
+
+也可以在普通 Node 环境中运行：
+
+\`\`\`bash
+npm ci
+npm run build
+DASHSCOPE_API_KEY=你的密钥 npm start
+\`\`\`

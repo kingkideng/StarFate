@@ -4,17 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "predev": "node setup-tarot3.mjs",
     "dev": "tsx server.ts",
-    "prebuild": "node setup-tarot3.mjs",
     "build": "vite build",
-    "start": "node server.ts",
+    "start": "node server.mjs",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "@google/genai": "^1.29.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
     "classnames": "^2.5.1",
@@ -27,7 +24,6 @@
     "react-dom": "^19.0.1",
     "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.5.0",
-    "tarot-card-img": "^0.1.0",
     "vite": "^6.2.3"
   },
   "devDependencies": {
