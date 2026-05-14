@@ -7,9 +7,24 @@ import { cn } from '../lib/utils';
 import Clarification from './Clarification';
 
 const MarkdownContent = lazy(() => import('./MarkdownContent'));
+type DrawnTarotCard = (typeof TAROT_CARDS)[number] & { orientation: 'upright' | 'reversed' };
+
+function shuffleTarotDeck() {
+  const deck = [...TAROT_CARDS];
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
+}
+
+function formatCardForReading(card: DrawnTarotCard) {
+  const orientation = card.orientation === 'reversed' ? '逆位' : '正位';
+  return `${card.zhName} (${card.name}) - ${orientation}`;
+}
 
 export default function Tarot() {
-  const [selectedCards, setSelectedCards] = useState<typeof TAROT_CARDS>([]);
+  const [selectedCards, setSelectedCards] = useState<DrawnTarotCard[]>([]);
   const [question, setQuestion] = useState('');
   const [isDrawing, setIsDrawing] = useState(false);
   const [report, setReport] = useState('');
@@ -19,9 +34,10 @@ export default function Tarot() {
     if (isDrawing || selectedCards.length === 3) return;
     setIsDrawing(true);
     
-    // Pick 3 random unique cards
-    const shuffled = [...TAROT_CARDS].sort(() => 0.5 - Math.random());
-    const picked = shuffled.slice(0, 3);
+    const picked: DrawnTarotCard[] = shuffleTarotDeck().slice(0, 3).map(card => ({
+      ...card,
+      orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
+    }));
     
     // Animate drawing one by one
     for (let i = 0; i < 3; i++) {
@@ -37,9 +53,9 @@ export default function Tarot() {
     setLoading(true);
     setReport('');
     try {
-      const past = `${selectedCards[0].zhName} (${selectedCards[0].name})`;
-      const present = `${selectedCards[1].zhName} (${selectedCards[1].name})`;
-      const future = `${selectedCards[2].zhName} (${selectedCards[2].name})`;
+      const past = formatCardForReading(selectedCards[0]);
+      const present = formatCardForReading(selectedCards[1]);
+      const future = formatCardForReading(selectedCards[2]);
       const stream = await interpretTarotStream(past, present, future, question);
       
       for await (const text of stream) {
@@ -125,12 +141,15 @@ export default function Tarot() {
                       <div className="w-full h-full relative">
                         <img 
                           src={card.image} 
-                          alt={card.zhName}
+                          alt={`${card.zhName}${card.orientation === 'reversed' ? '逆位' : '正位'}`}
                           width={475}
                           height={816}
                           loading="lazy"
                           decoding="async"
-                          className="w-full h-full object-cover rounded shadow-[0_0_15px_rgba(197,160,89,0.2)]"
+                          className={cn(
+                            "w-full h-full object-cover rounded shadow-[0_0_15px_rgba(197,160,89,0.2)] transition-transform duration-500",
+                            card.orientation === 'reversed' && "rotate-180"
+                          )}
                         />
                       </div>
                     )}
@@ -155,6 +174,9 @@ export default function Tarot() {
                   className="mt-6 text-center"
                 >
                   <h3 className="text-sm md:text-xl font-serif text-[#C5A059] uppercase tracking-widest">{card.zhName}</h3>
+                  <div className="mt-2 text-[10px] md:text-xs font-sans tracking-[0.25em] text-white/45">
+                    {card.orientation === 'reversed' ? '逆位' : '正位'}
+                  </div>
                 </motion.div>
               )}
             </div>
