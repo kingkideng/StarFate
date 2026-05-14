@@ -122,21 +122,5 @@ export async function* interpretAstrologyStream(gender: string, date: string, ti
 }
 
 export async function* interpretBaziStream(gender: string, date: string, time: string, location: string) {
-  const prompt = `
-${BASE_PROMPT}
-
-来访者正在寻求严谨的中国传统命理（八字）智慧。以下是求测者的出生信息：
-性别：${gender}
-阳历出生日期：${date}
-出生时间：${time}
-出生地点：${location}
-
-请你作为专业的命理师：
-1. 根据出生地点和时间推算其真实太阳时，并排盘得出其四柱八字（天干地支）。
-2. 根据其性别推演其大运的顺逆，作为后续分析支撑。
-3. 用中国传统命理中五行（金、木、水、火、土）与天干地支的美学意象，来描绘他们生命底色的风景。
-4. 输出一份具有东方禅意与严谨命理结合的命运趋势分析报告，指出他们性格中的力量与暗流，喜忌用神，以及人生下一阶段的转机与大运指引。
-`;
-
-  yield* fetchAIStream([{ role: 'user', content: prompt }]);
+  yield* fetchStream('/api/bazi', { gender, date, time, location });
 }

@@ -8,6 +8,12 @@ import {
   parseBirthInput,
   requestDashScopeStream,
 } from "./server-lib/astrology-core.js";
+import {
+  buildBaziMessages,
+  buildBaziSystemMarkdown,
+  calculateBaziChart,
+  createSseContentChunk,
+} from "./server-lib/bazi-core.js";
 
 const DASHSCOPE_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 
@@ -108,10 +114,54 @@ async function startServer() {
     }
   };
 
+  const baziHandler = async (req: express.Request, res: express.Response) => {
+    const apiKey = process.env.DASHSCOPE_API_KEY || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: '请配置 DASHSCOPE_API_KEY 环境变量' });
+    }
+    if (!process.env.AMAP_API_KEY) {
+      return res.status(500).json({ error: '请配置 AMAP_API_KEY 环境变量' });
+    }
+
+    try {
+      const input = parseBirthInput(req.body);
+      const geo = await geocodeWithAmap(input.location, process.env.AMAP_API_KEY);
+      const chart = calculateBaziChart(input, geo);
+      const messages = buildBaziMessages(input, geo, chart);
+      const response = await requestDashScopeStream(messages, apiKey);
+
+      if (!response.ok) {
+        const errStr = await response.text();
+        return res.status(response.status).json({ error: `大模型通信失败: ${errStr}` });
+      }
+
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache, no-transform');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no');
+      res.write(createSseContentChunk(`${buildBaziSystemMarkdown(input, geo, chart)}\n\n`));
+
+      if (response.body) {
+        for await (const chunk of response.body as any) {
+          res.write(chunk);
+        }
+      }
+      res.end();
+    } catch (error: any) {
+      console.error('Bazi API Error:', error);
+      if (!res.headersSent) {
+        res.status(400).json({ error: error?.message || '八字排盘失败，请检查出生信息。' });
+      } else {
+        res.end();
+      }
+    }
+  };
+
   // API route for AI streaming. /api/gemini remains as a temporary compatibility alias.
   app.post("/api/chat", chatHandler);
   app.post("/api/gemini", chatHandler);
   app.post("/api/astrology", astrologyHandler);
+  app.post("/api/bazi", baziHandler);
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
